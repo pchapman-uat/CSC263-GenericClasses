@@ -162,7 +162,7 @@ class BinarySearchTree<T extends Comparable<T>> {
         // If the key is greater than the root's key, delete from the right subtree
         if(key.compareTo(root.key) < 0){
             root.left = deleteRec(root.left, key);
-        }else if(key.compareTo(key) > 0){
+        }else if(key.compareTo(root.key) > 0){
             root.right = deleteRec(root.right, key);
         } else {
             // If node with only 1 or less children
@@ -171,11 +171,12 @@ class BinarySearchTree<T extends Comparable<T>> {
             } else if(root.right == null){
                 return root.left;
             } 
-            // Node with two children get the inorder sucesssor (smallest in right sub tree)
+            // Node with two children get the inorder successor (smallest in right sub tree)
             root.key = minValue(root.right);
-            // Delete the in order successor
+            // Delete the inorder successor
             root.right = deleteRec(root.right, root.key);
-        } return root;
+        } 
+        return root;
     }
 
     // Find the minimum value in the BST
@@ -203,7 +204,7 @@ class BinarySearchTree<T extends Comparable<T>> {
             return root!=null;
         }
         // If the key is less than the root's key, search in the left subtree
-        if(root.key.compareTo(key) < 0){
+        if(root.key.compareTo(key) > 0){
             return searchRec(root.left, key);
         }
         // If the key is greater than the root's key, search in the right subtree
