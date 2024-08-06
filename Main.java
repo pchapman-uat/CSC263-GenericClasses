@@ -2,8 +2,9 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Hello World");
 
+        System.out.println("Integer Binary Search Tree");
         // Implimentation
-        BinarySearchTree bst = new BinarySearchTree();
+        BinarySearchTree<Integer> bst = new BinarySearchTree<Integer>();
         // Insert keys
         bst.insert(30);
         bst.insert(70);
@@ -37,49 +38,101 @@ public class Main {
         System.out.println("In-Order traversal after deleting " + keyToDelete);
         bst.inOrderTraversal();
         System.out.println();
+
+        System.out.println("String Binary Search Tree");
+        BinarySearchTree<String> bst2 = new BinarySearchTree<String>();
+        // Insert keys
+        bst2.insert("apple");
+        bst2.insert("banana");
+        bst2.insert("cherry");
+        bst2.insert("date");
+        bst2.insert("elderberry");
+        bst2.insert("fig");
+
+        System.out.println("In Order");
+        bst2.inOrderTraversal();
+        System.out.println();
+
+        System.out.println("Pre Order");
+        bst2.preOrderTraversal();
+        System.out.println();
+
+        System.out.println("Post Order");
+        bst2.postOrderTraversal();
+        System.out.println();
+
+        System.out.println("Search for 'banana'");
+        boolean result2 = bst2.search("banana");
+        if(result2) System.out.println("banana is in the tree");
+        else System.out.println("banana is not in the tree");
+        System.out.println();
+
+        System.out.println("Deleting 'cherry'");
+        bst2.delete("cherry");
+        System.out.println("In Order traversal after deleting 'cherry'");
+        bst2.inOrderTraversal();
+        System.out.println();
+
+
     }
 }
 
 
 // Binary Tree Class
-class Node {
-    int key;
-    Node left, right;
-    public Node(int item){
-        key = item;
-        left = right = null;
+class Node<T extends Comparable<T>> implements Comparable<Node<T>> {
+    T key;
+    Node<T> left, right;
+
+    public Node(T item) {
+        this.key = item;
+        this.left = null;
+        this.right = null;
+    }
+
+    @Override
+    public int compareTo(Node<T> other) {
+        if (other == null) {
+            throw new NullPointerException("Cannot compare with null");
+        }
+        // Delegate comparison to the key's compareTo method
+        return this.key.compareTo(other.key);
     }
 }
 
-class BinarySearchTree{
-    private Node root;
+
+class BinarySearchTree<T extends Comparable<T>> {
+    private Node<T> root;
     public BinarySearchTree(){
         root = null;
     }
-    public void insert(int key){
+    public void insert(T key){
         root = insertRec(root, key);
     }
-    private Node insertRec(Node root, int key){
-        if(root == null){
-            root = new Node(key);
+    private Node<T> insertRec(Node<T> root, T key) {
+        if (root == null) {
+            root = new Node<T>(key);
             return root;
         }
-        if(key<root.key){
+    
+        if (key.compareTo(root.key) < 0) {
             root.left = insertRec(root.left, key);
-        } else if(key>root.key){
+        } else if (key.compareTo(root.key) > 0) {
             root.right = insertRec(root.right, key);
-        } return root;
+        }
+    
+        return root;
     }
-    public void delete(int key){
+    
+    public void delete(T key){
         root = deleteRec(root, key);
     }
-    private Node deleteRec(Node root, int key){
+    private Node<T> deleteRec(Node<T> root, T key){
         if(root == null){
             return root;
         } 
-        if(key<root.key){
+        if(key.compareTo(root.key) < 0){
             root.left = deleteRec(root.left, key);
-        }else if(key>root.key){
+        }else if(key.compareTo(key) > 0){
             root.right = deleteRec(root.right, key);
         } else {
             // If node with only 1 or less children
@@ -94,20 +147,20 @@ class BinarySearchTree{
             root.right = deleteRec(root.right, root.key);
         } return root;
     }
-    private int minValue(Node root){
-        int minValue = root.key;
+    private T minValue(Node<T> root){
+        T minValue = root.key;
         while(root.left != null){
             minValue = root.left.key;
         } return minValue;        
     }
-    public boolean search(int key){
+    public boolean search(T key){
         return searchRec(root, key);
     }
-    private boolean searchRec(Node root, int key){
-        if(root == null || root.key == key){
+    private boolean searchRec(Node<T> root, T key){
+        if(root == null || root.key.compareTo(key) == 0){
             return root!=null;
         }
-        if(key < root.key){
+        if(root.key.compareTo(key) < 0){
             return searchRec(root.left, key);
         }
         return searchRec(root.right, key);
@@ -116,7 +169,7 @@ class BinarySearchTree{
     public void inOrderTraversal(){
         inOrderTraversalRec(root);
     }
-    private void inOrderTraversalRec(Node root){
+    private void inOrderTraversalRec(Node<T> root){
         if(root != null){
             inOrderTraversalRec(root.left);
             System.out.println(root.key + " ");
@@ -126,7 +179,7 @@ class BinarySearchTree{
     public void preOrderTraversal(){
         preOrderTraversalRec(root);
     }
-    private void preOrderTraversalRec(Node root){
+    private void preOrderTraversalRec(Node<T> root){
         if(root!=null){
             System.out.println(root.key + " ");
             preOrderTraversalRec(root.left);
@@ -137,7 +190,7 @@ class BinarySearchTree{
     public void postOrderTraversal(){
         postOrderTraversalRec(root);
     }
-    private void postOrderTraversalRec(Node root){
+    private void postOrderTraversalRec(Node<T> root){
         if(root!=null){
             postOrderTraversalRec(root.left);
             postOrderTraversalRec(root.right);
